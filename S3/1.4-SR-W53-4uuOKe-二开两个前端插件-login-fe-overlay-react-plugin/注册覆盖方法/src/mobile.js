@@ -129,7 +129,11 @@ const App = props => {
                     console.log(909090, err);
                     Toast.show({
                         icon: 'fail',
+<<<<<<< HEAD
                         content: errorCode[`ERROR.${err.data.code}`] || '注册失败',
+=======
+                        content: err?.data?.message || '注册失败',
+>>>>>>> 620659b2097b96ce7ec2505e26fa9c4c57b32e5f
                     })
                     resolve({ success: false });
                 });
