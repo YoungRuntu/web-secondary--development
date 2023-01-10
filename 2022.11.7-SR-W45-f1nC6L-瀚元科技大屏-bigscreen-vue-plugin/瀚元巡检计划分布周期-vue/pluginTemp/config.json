@@ -1,0 +1,22 @@
+{
+  "id": "fe8a8c3b-d322-4eaf-aff3-0d4872417c56",
+  "type": "bigscreen",
+  "main": "app.666cb136.js",
+  "requirement-number": "",
+  "requirement-name": "top告警统计",
+  "version": "2",
+  "props": {
+    "img": "APP_0001.png",
+    "disableimg": "disabled_custom_table.png",
+    "name": "Vue版本的演示Demo",
+    "className": "className-demo",
+    "configuration": [
+      "style",
+      "data",
+      "other"
+    ],
+    "vars": [
+      "id"
+    ]
+  }
+}

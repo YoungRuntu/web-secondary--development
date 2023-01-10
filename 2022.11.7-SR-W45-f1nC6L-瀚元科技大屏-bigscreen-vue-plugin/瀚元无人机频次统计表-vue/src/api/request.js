@@ -4,7 +4,7 @@ import qs from "querystringify";
 let apiContextPath = "";
 if (process.env.NODE_ENV === "development") {
   document.cookie =
-    "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3MzMxNzMyNDA3NywidXNlcklkIjoiMTIzNDU2Nzg5MCJ9._k50RFl7ygiUfx9DGufN-UEobSoZdzboTFcn4U1WSgg";
+    "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY2ODA0NjkzNzI4NSwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.usab2VjvlJkApJ2XSTpJBK1Tw5T8mQDy6c0OUkjbdY4";
   document.cookie =
     "refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY0NjcyMjI2ODY4Nn0.TEVE_nopHNZlvSQM_RUZrLcCzkaERiHo8nz0q-ksL3E";
   document.cookie = "username=admin";
@@ -20,7 +20,7 @@ const instance = axios.create({
   },
   headers:
     (window.location.search && qs.parse(window.location.search).token) ||
-      window.token
+    window.token
       ? { token: qs.parse(window.location.search).token || window.token }
       : {},
 });
