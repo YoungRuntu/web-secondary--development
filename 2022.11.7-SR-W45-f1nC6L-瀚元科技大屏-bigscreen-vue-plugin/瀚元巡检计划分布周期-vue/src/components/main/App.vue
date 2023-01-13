@@ -14,7 +14,6 @@
       <!-- 右边主体内容 -->
       <div class="alarmt_two_right">
         <div class="head_secaher">
-
           <div class="grid-content bg-purple">所在省份：<el-select v-model="paramsObj.province" :popper-append-to-body="true"
               popper-class="two_options" size="small" placeholder="请选择" :disabled="Boolean(province)"
               @change="(e) => { selectProFn('province', e) }">
@@ -128,7 +127,8 @@ export default {
       city: '',
       substationName: '',
       province: '',
-      paramsObj: { province: '11', city: '1101', substationName: '北京市一级变电站', periodTimeType: 6 }
+      // paramsObj: { province: '11', city: '1101', substationName: '北京市一级变电站', periodTimeType: 6 }
+      paramsObj: { province: '', city: '', substationName: '', periodTimeType: 6 }
     };
   },
   props: {
@@ -163,9 +163,6 @@ export default {
         }
         return colorFont
       }
-
-
-
     },
     nameAlartm() {
       return (data) => {
@@ -302,6 +299,7 @@ export default {
     let substationOp = {}
     let provinceOp = {}
     let cityOp = {}
+    console.log(this.totalArr, '===asdas');
     if (this.totalArr.substationOp) {
       substationOp = this.totalArr.substationOp.find((x, i) => {
         return x.statno == this.substationName
@@ -317,11 +315,9 @@ export default {
         return x.value == this.city
       })
     }
-
     this.paramsObj.substationName = substationOp?.value
     this.paramsObj.province = provinceOp?.value
     this.paramsObj.city = cityOp?.value
-
     // this.initEchartFn(this.tableData)
   },
   methods: {
@@ -367,18 +363,16 @@ export default {
       ]
       TOPNAlarmInfo(params).then(res => {
         this.tableData = res.data
-
         this.tableData.forEach(x => {
           x.alarm_name = date[x.planCycle]
           x.alarmNum = x.count
           dateObj[x.planCycle].alarmNum = x.count
         })
-
         this.tableData.sort(function (a, b) {
           return b.planCycle - a.planCycle
         })
         // this.initEchartFn(this.tableData)
-        this.initEchartFn(dateObj)
+        this.initEchartFn(this.tableData.length > 0 ? dateObj : [])
       }).catch(err => {
         console.log(err);
       })
@@ -403,6 +397,69 @@ export default {
         }
 
       }).catch(err => {
+        this.provinceOp = [
+          {
+            "label": "北京市",
+            "value": 11
+          },
+          {
+            "label": "江苏省",
+            "value": 32
+          },
+          {
+            "label": "安徽省",
+            "value": 34
+          },
+          {
+            "label": "广东省",
+            "value": 44
+          }
+        ]
+        this.cityOp = [
+          {
+            "label": "北京市",
+            "value": 1101
+          },
+          {
+            "label": "南京市",
+            "value": 3201
+          },
+          {
+            "label": "滁州市",
+            "value": 3411
+          },
+          {
+            "label": "揭阳市",
+            "value": 4452
+          }
+        ]
+        this.substationOp = [
+          {
+            "label": "北京市一级变电站",
+            "value": "北京市一级变电站",
+            "id": "11011258812588001",
+            "statno": "1258812588001"
+          },
+          {
+            "label": "南京市一级变电站",
+            "value": "南京市一级变电站",
+            "id": "3201320100",
+            "statno": "320100"
+          },
+          {
+            "label": "安徽滁州一级变电站",
+            "value": "安徽滁州一级变电站",
+            "id": "34112",
+            "statno": "2"
+          },
+          {
+            "label": "揭阳市变电站",
+            "value": "揭阳市变电站",
+            "id": "4452p0Lx8TI3mpOr3",
+            "statno": "p0Lx8TI3mpOr3"
+          }
+        ]
+        this.totalArr = { provinceOp: this.provinceOp, cityOp: this.cityOp, substationOp: this.substationOp }
         console.log(err);
       })
     },
@@ -436,19 +493,15 @@ export default {
       })
       let cityOp = this.totalArr.cityOp
       this.cityOp = cityOp.filter((x, i) => {
-
         let filed = String(x.value)
         let strl = filed.length
-
         return filed.substr(0, strl - 2) == e
       })
-
-
     },
     //渲染图表
     initEchartFn(data) {
       let xAData = []
-      console.log(data, '====data');
+      // console.log(data, '====data');
       let echart = data.map((x, i) => {
         xAData.push({
           value: x.alarm_name, textStyle: {
@@ -459,7 +512,12 @@ export default {
       })
       let options = {
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
+          // formatter: '{b0}: {c0}<br />{b1}: {c1}'
+        },
+        grid: {
+          left: '5%',
+          right: '5%'
         },
         xAxis: [
           {
@@ -498,12 +556,10 @@ export default {
                 type: 'solid',
                 width: 1,
               },
-
             },
             axisTick: {
               show: false
             },
-
             // 修改y轴分割线
             splitLine: {
               lineStyle: {
@@ -516,7 +572,6 @@ export default {
         series: [{
           type: 'bar',
           barWidth: 35,
-
           itemStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
               {

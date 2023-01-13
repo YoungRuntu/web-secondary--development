@@ -1,9 +1,9 @@
 {
-  "id": "fe8a8c3b-d322-4eaf-aff3-0d4872417c56",
+  "id": "c1243d17-0c5c-44c9-b624-96253f40f921",
   "type": "bigscreen",
-  "main": "app.666cb136.js",
+  "main": "app.a1c25af1.js",
   "requirement-number": "",
-  "requirement-name": "top告警统计",
+  "requirement-name": "巡检计划分布周期",
   "version": "2",
   "props": {
     "img": "APP_0001.png",

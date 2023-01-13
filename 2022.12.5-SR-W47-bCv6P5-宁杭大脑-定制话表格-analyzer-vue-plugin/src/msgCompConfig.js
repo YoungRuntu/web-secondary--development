@@ -2,7 +2,7 @@
 export const events = [
   {
     key: "valueChange",
-    name: "值改变",
+    name: "时间类型改变事件",
     payload: [
       {
         name: "值",

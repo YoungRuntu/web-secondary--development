@@ -6,9 +6,9 @@
     <div class="topTitltExport">
       <div>
         <div class="topXieImg"></div>
-        <span>&nbsp;&nbsp;&nbsp;站点缺陷统计表</span>
+        <span>&nbsp;&nbsp;&nbsp;无人机频次统计表</span>
       </div>
-      <el-button plain class="plainButton" @click="tableToExcel(tableData)">导出</el-button>
+      <el-button plain class="plainButton" @click="tableToExcel(dataALl)">导出</el-button>
     </div>
     <div>
       <span class="selectSpan">所在省份</span>
@@ -64,9 +64,9 @@
       <el-table-column prop="happenTimeFirst" label="首次发生时间" width="160"> </el-table-column>
       <el-table-column prop="happenTimeLast" label="最后发生时间" width="160"> </el-table-column>
     </el-table>
-    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNo"
-      :page-sizes="[5, 10, 20, 50]" :page-size="pageSize" background popper-class="inputSelectBacPoper"
-      layout="sizes, total, prev, pager, next, jumper" :total="total">
+    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+      :current-page="pageObj.currentPage" :page-sizes="[5, 10, 20, 50]" :page-size="pageObj.pageSize" background
+      popper-class="inputSelectBacPoper" layout="sizes, total, prev, pager, next, jumper" :total="pageObj.total">
     </el-pagination>
   </div>
 </template>
@@ -114,6 +114,7 @@ export default {
           label: "三级",
         },
       ],
+      dataAll: [],
       levelSelect: {},
       provinceOption: [],
       provinceData: [],
@@ -127,6 +128,7 @@ export default {
       city: '',
       substationName: '',
       province: '',
+      pageObj: { currentPage: 1, pageSize: 10, total: null },
     };
   },
   props: {
@@ -157,8 +159,6 @@ export default {
             }
           });
         }
-
-
         if (!this.city && !this.substationName && this.province) this.searchTable()
       },
 
@@ -194,8 +194,6 @@ export default {
     },
   },
   mounted() {
-
-
     queryDropDownBox().then((res) => {
       res.data.forEach((item, index) => {
         if (item.city_name) {
@@ -215,6 +213,162 @@ export default {
       this.cityData = this.cityOption;
       this.stationData = this.stationOption;
 
+      this.province = this.variable.default_value && JSON.parse(this.variable.default_value).province_id || this.variable.current_value && JSON.parse(this.variable.current_value).province_id || ''
+      this.city = this.variable.default_value && JSON.parse(this.variable.default_value).city_id || this.variable.current_value && JSON.parse(this.variable.current_value).city_id || ''
+      this.substationName = this.variable.default_value && JSON.parse(this.variable.default_value).substation_no || this.variable.current_value && JSON.parse(this.variable.current_value).substation_no || ''
+
+      let substationOp = {}
+      let cityOp = {}
+      let provinceOp = {}
+      if (this.stationData.length != 0) {
+        substationOp = this.stationData.find((x, i) => {
+          return x.substation_no == this.substationName
+        })
+      }
+      if (this.cityData.length != 0) {
+        cityOp = this.cityData.find((x, i) => {
+          return x.city_id == this.city
+        })
+      }
+      if (this.provinceData.length != 0) {
+        provinceOp = this.provinceData.find((x, i) => {
+          return x.province_id == this.province
+        })
+      }
+
+      this.stationSelect = substationOp
+      this.provinceSelect = provinceOp
+      this.citySelect = cityOp
+    }).catch(err => {
+      this.stationOption = [
+        {
+          "city_name": "北京市",
+          "province_id": 11,
+          "substation_no": "1258812588001",
+          "substation_level": "1",
+          "substation_name": "北京市一级变电站",
+          "concat": "11011258812588001",
+          "province_name": "北京市",
+          "city_id": 1101
+        },
+        {
+          "city_name": "南京市",
+          "province_id": 32,
+          "substation_no": "320100",
+          "substation_level": "1",
+          "substation_name": "南京市一级变电站",
+          "concat": "3201320100",
+          "province_name": "江苏省",
+          "city_id": 3201
+        },
+        {
+          "city_name": "滁州市",
+          "province_id": 34,
+          "substation_no": "2",
+          "substation_level": "1",
+          "substation_name": "安徽滁州一级变电站",
+          "concat": "34112",
+          "province_name": "安徽省",
+          "city_id": 3411
+        },
+        {
+          "city_name": "揭阳市",
+          "province_id": 44,
+          "substation_no": "p0Lx8TI3mpOr3",
+          "substation_level": "1",
+          "substation_name": "揭阳市变电站",
+          "concat": "4452p0Lx8TI3mpOr3",
+          "province_name": "广东省",
+          "city_id": 4452
+        }
+      ]
+      this.provinceOption = [
+        {
+          "city_name": "北京市",
+          "province_id": 11,
+          "substation_no": "1258812588001",
+          "substation_level": "1",
+          "substation_name": "北京市一级变电站",
+          "concat": "11011258812588001",
+          "province_name": "北京市",
+          "city_id": 1101
+        },
+        {
+          "city_name": "南京市",
+          "province_id": 32,
+          "substation_no": "320100",
+          "substation_level": "1",
+          "substation_name": "南京市一级变电站",
+          "concat": "3201320100",
+          "province_name": "江苏省",
+          "city_id": 3201
+        },
+        {
+          "city_name": "滁州市",
+          "province_id": 34,
+          "substation_no": "2",
+          "substation_level": "1",
+          "substation_name": "安徽滁州一级变电站",
+          "concat": "34112",
+          "province_name": "安徽省",
+          "city_id": 3411
+        },
+        {
+          "city_name": "揭阳市",
+          "province_id": 44,
+          "substation_no": "p0Lx8TI3mpOr3",
+          "substation_level": "1",
+          "substation_name": "揭阳市变电站",
+          "concat": "4452p0Lx8TI3mpOr3",
+          "province_name": "广东省",
+          "city_id": 4452
+        }
+      ]
+      this.cityOption = [
+        {
+          "city_name": "北京市",
+          "province_id": 11,
+          "substation_no": "1258812588001",
+          "substation_level": "1",
+          "substation_name": "北京市一级变电站",
+          "concat": "11011258812588001",
+          "province_name": "北京市",
+          "city_id": 1101
+        },
+        {
+          "city_name": "南京市",
+          "province_id": 32,
+          "substation_no": "320100",
+          "substation_level": "1",
+          "substation_name": "南京市一级变电站",
+          "concat": "3201320100",
+          "province_name": "江苏省",
+          "city_id": 3201
+        },
+        {
+          "city_name": "滁州市",
+          "province_id": 34,
+          "substation_no": "2",
+          "substation_level": "1",
+          "substation_name": "安徽滁州一级变电站",
+          "concat": "34112",
+          "province_name": "安徽省",
+          "city_id": 3411
+        },
+        {
+          "city_name": "揭阳市",
+          "province_id": 44,
+          "substation_no": "p0Lx8TI3mpOr3",
+          "substation_level": "1",
+          "substation_name": "揭阳市变电站",
+          "concat": "4452p0Lx8TI3mpOr3",
+          "province_name": "广东省",
+          "city_id": 4452
+        }
+      ]
+      this.provinceData = this.provinceOption;
+      this.cityData = this.cityOption;
+      this.stationData = this.stationOption;
       this.province = this.variable.default_value && JSON.parse(this.variable.default_value).province_id || this.variable.current_value && JSON.parse(this.variable.current_value).province_id || ''
       this.city = this.variable.default_value && JSON.parse(this.variable.default_value).city_id || this.variable.current_value && JSON.parse(this.variable.current_value).city_id || ''
       this.substationName = this.variable.default_value && JSON.parse(this.variable.default_value).substation_no || this.variable.current_value && JSON.parse(this.variable.current_value).substation_no || ''
@@ -263,8 +417,6 @@ export default {
         substationOp = this.stationData.find((x, i) => {
           return x.substation_no == this.substationName
         })
-
-
         this.stationSelect = substationOp
         this.provinceSelect = provinceOp
         this.citySelect = cityOp
@@ -278,8 +430,6 @@ export default {
   methods: {
 
     oneFixed(row, column, cellValue, index) {
-
-
       // console.log(row, column, cellValue, '=============ds');
       return row.total == 0 ? '--' : Number(cellValue).toFixed(2) + '%'
     },
@@ -350,18 +500,20 @@ export default {
         city: this.citySelect?.city_id || this.city || "", //市
         substationName: this.stationSelect?.substation_name || this.substationName || "", //电站名称
         level: this.levelSelect.value || "1", //等级
-        startTime: this.searchDate[0] || "2020-11-12",
-        endTime: this.searchDate[1] || "2023-11-12",
+        startTime: this.searchDate[0] || "",
+        endTime: this.searchDate[1] || "",
         // pageSize: this.pageSize || "", //页面数据条数  数字
         // pageNo: this.pageNo || "", //页码  数字
       };
       stationFlawStatistics(message).then((res) => {
-        this.tableData = res.data;
-        this.tableData.forEach((item, index) => {
+        this.dataAll = JSON.parse(JSON.stringify(res.data))
+        this.dataAll.forEach((item, index) => {
           item.successRate = item.count == 0 ? '--' : Number(item.successRate * 100).toFixed(2)
         });
-        console.log(this.tableData, '======a');
-        this.total = res.data.total;
+        this.pageObj.currentPage = 1
+        this.tableData = this.dataAll.slice(0, this.pageObj.currentPage * this.pageObj.pageSize)
+        // console.log(this.tableData, '======a');
+        this.pageObj.total = this.dataAll.length;
       });
     },
     tableToExcel(tableData) {
@@ -417,11 +569,7 @@ export default {
         str += "<tr>";
         for (const key of headArr) {
           // 增加\t为了不让表格显示科学计数法或者其他格式
-          if (key == 'level') {
-            str += `<td>${levelTemp[tableData[i][key] - 1] + "\t"}</td>`;
-          } else {
-            str += `<td>${tableData[i][key] || '' + "\t"}</td>`;
-          }
+          str += `<td>${tableData[i][key] || '' + "\t"}</td>`;
         }
         str += "</tr>";
       } // Worksheet名
@@ -461,16 +609,31 @@ export default {
       const s = (date.getSeconds() + "").padStart(2, "0");
       return Y + M + D + h + m + s;
     },
+    //改变页尺寸
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-      this.pageSize = val;
-      this.searchTable();
+      this.pagingHandler(this.pageObj.currentPage, val)
+      this.pageObj.pageSize = val
     },
+    //改变页数
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-      this.pageNo = val;
-      this.searchTable();
+      this.pagingHandler(val, this.pageObj.pageSize)
+      this.pageObj.currentPage = val
     },
+    //分页
+    pagingHandler(pageNum, pageSize) {
+      this.tableData = this.dataAll.slice((pageNum - 1) * pageSize, (pageNum - 1) * pageSize + pageSize)
+      // this.initEchartFn(this.tableData)
+    },
+    // handleSizeChange(val) {
+    //   console.log(`每页 ${val} 条`);
+    //   this.pageSize = val;
+    //   this.searchTable();
+    // },
+    // handleCurrentChange(val) {
+    //   console.log(`当前页: ${val}`);
+    //   this.pageNo = val;
+    //   this.searchTable();
+    // },
     Event_Center_getName: () => {
       return this.id;
     },

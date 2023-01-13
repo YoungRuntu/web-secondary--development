@@ -1,35 +1,46 @@
 <template>
   <div :id="id" :ref="id" style="width: 100%; background-color: #fff">
     <div style="display: flex">
-      <span style="line-height: 80px; margin-right: 5px;margin-left: 15px;font-weight: 700;">日期选择:</span
-      ><el-date-picker
-        v-model="dataPicker"
-        type="daterange"
-        format="yyyy-MM-dd"
-        value-format="yyyy-MM-dd"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        @change="dateChange"
-        :picker-options="pickerOptions"
-      >
+      <span
+        style="line-height: 80px; margin-right: 5px; margin-left: 15px; font-weight: 700; font-size: 14px">日期选择:</span><el-date-picker
+        v-model="dataPicker" type="daterange" format="yyyy-MM-dd" value-format="yyyy-MM-dd" range-separator="至"
+        start-placeholder="开始日期" end-placeholder="结束日期" @change="dateChange" :picker-options="pickerOptions">
       </el-date-picker>
     </div>
     <p class="chartsTitle">等效时数对比图</p>
     <div style="height: 400px; width: 100%" id="contrastCharts"></div>
     <div class="info">
-      <span>
-        {{ this.dataPicker[0] }}至 {{ this.dataPicker[1] }}时间段内
+      <span v-if="this.customConfig.type == 1">
+        已选电站在{{ this.dataPicker[0] }}至 {{ this.dataPicker[1] }}时间段内
         <br />
-        总等效时数最大的为【{{ this.allData.max_equivalent_hours_name }}】，总等效时数最大为【{{
-          isNaN(Number(this.allData.max_equivalent_hours).toFixed(2)) ? "" : Number(this.allData.max_equivalent_hours).toFixed(2) + "h"
+        累计等效时数值最大的电站为【{{ this.allData.max_equivalent_hours_name }}】，最大值为【{{
+  isNaN(Number(this.allData.max_equivalent_hours).toFixed(2)) ? "" :
+  Number(this.allData.max_equivalent_hours).toFixed(2) + "h"
         }}】，
         <br />
-        总等效时数最小的为【{{ this.allData.min_equivalent_hours_name }}】，总等效时数最小为【{{
-          isNaN(Number(this.allData.min_equivalent_hours).toFixed(2)) ? "" : Number(this.allData.min_equivalent_hours).toFixed(2) + "h"
+        累计等效时数值最小的电站为【{{ this.allData.min_equivalent_hours_name }}】，最小值为【{{
+  isNaN(Number(this.allData.min_equivalent_hours).toFixed(2)) ? "" :
+  Number(this.allData.min_equivalent_hours).toFixed(2) + "h"
         }}】，
         <br />
-        所有电站的平均等效时数为【{{ isNaN(Number(this.allData.maxAvg).toFixed(2)) ? "" : Number(this.allData.maxAvg).toFixed(2) + "h" }}】
+        已选电站的累计等效时数平均值为【{{ isNaN(Number(this.allData.maxAvg).toFixed(2)) ? "" : Number(this.allData.maxAvg).toFixed(2) +
+        "h" }}】
+      </span>
+      <span v-else>
+        已选设备在{{ this.dataPicker[0] }}至 {{ this.dataPicker[1] }}时间段内
+        <br />
+        累计等效时数值最大的设备为【{{ this.allData.max_equivalent_hours_name }}】，最大值为【{{
+  isNaN(Number(this.allData.max_equivalent_hours).toFixed(2)) ? "" :
+  Number(this.allData.max_equivalent_hours).toFixed(2) + "h"
+        }}】，
+        <br />
+        累计等效时数值最小的设备为【{{ this.allData.min_equivalent_hours_name }}】，最小值为【{{
+  isNaN(Number(this.allData.min_equivalent_hours).toFixed(2)) ? "" :
+  Number(this.allData.min_equivalent_hours).toFixed(2) + "h"
+        }}】，
+        <br />
+        已选设备的累计等效时数平均值为【{{ isNaN(Number(this.allData.maxAvg).toFixed(2)) ? "" : Number(this.allData.maxAvg).toFixed(2) +
+        "h" }}】
       </span>
     </div>
   </div>
@@ -91,12 +102,12 @@ export default {
           let nowData = new Date( //获取此时年月日的后一天
             now.getFullYear(),
             now.getMonth(),
-            now.getDate() + 1 //获取明天
+            now.getDate() //获取当天
           );
           let oneMonthAgo = new Date( //获取一个月之前的时间
             now.getFullYear(),
             now.getMonth() - 1, //获取上一个月
-            now.getDate() + 1 //将多算的一天减掉
+            now.getDate() //将多算的一天减掉
           );
 
           return (
@@ -108,7 +119,8 @@ export default {
     };
   },
   mounted() {
-    const date = new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 6);
+    // 获取默认前一周，不含今天
+    const date = new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 7);
     const startTime =
       date.getFullYear() +
       "-" +
@@ -116,7 +128,7 @@ export default {
       "-" +
       (date.getDate() < 10 ? "0" + date.getDate() : date.getDate());
 
-    const date2 = new Date();
+    const date2 = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
     const endTime =
       date2.getFullYear() +
       "-" +
@@ -125,6 +137,7 @@ export default {
       (date2.getDate() < 10 ? "0" + date2.getDate() : date2.getDate());
 
     this.dataPicker = [startTime, endTime];
+    //end
     this.initData();
     //用于注册事件定义，不可删除
     let { componentId } = this.customConfig || {};
@@ -140,10 +153,10 @@ export default {
     },
     initData() {
       let message = {
-        type: this.customConfig.type || 0,
+        type: this.customConfig.type || 1,
         startTime: this.dataPicker[0],
         endTime: this.dataPicker[1],
-        ids: this.ids,
+        ids: this.ids
       };
       compareAnalyse(message)
         .then((res) => {
@@ -159,7 +172,7 @@ export default {
             let info = [];
             item.forEach((item2, index2) => {
               if (this.xData[index2] == item2.time) {
-                info.push(Number(item2.equivalent_hours_d).toFixed(2));
+                info.push(Number(item2.equivalent_hours_d).toFixed(3));
               } else {
                 info.push(0);
               }
@@ -167,6 +180,14 @@ export default {
             this.name.push(item[0]?.name);
             this.yData.push(info);
           });
+          let info = []
+          res.data.dispersionRatio.forEach(x => {
+            for (const key in x) {
+              info.push(Number(x[key]).toFixed(1))
+            }
+          })
+          this.yData.push(info)
+          this.name.push('离散率')
           this.initEcharts(this.xData, this.name, this.yData);
         })
         .catch((err) => {
@@ -177,13 +198,19 @@ export default {
           this.initEcharts(this.xData, this.name, this.yData);
         });
     },
+
     initEcharts(xData, name, Ydata) {
       const myChart = echarts.init(document.getElementById("contrastCharts"));
       let xLabel = xData;
+      let legName = JSON.parse(JSON.stringify(name))
+      let legObj = legName.map(item => {
+        return { name: item }
+      })
       let serise = [];
       Ydata.forEach((item, index) => {
         serise.push({
           showName: name[index],
+          id: index,
           name: index,
           type: "line",
           symbol: "circle", // 默认是空心圆（中间是白色的），改成实心圆
@@ -201,28 +228,69 @@ export default {
         tooltip: {
           trigger: "axis",
           formatter: (params) => {
+            let max = "";
+            let min = "";
+            let avg = 0;
             var relVal = params[0].name;
-            for (var i = 0, l = params.length; i < l; i++) {
-              relVal += "<div>" + params[i].marker + name[i] + "&nbsp;&nbsp;&nbsp;" + "<span style='float:right'>" + params[i].value + "h" + "</span>" + "</div>";
+            if (Array.isArray(params)) {
+              max = Math.max.apply(
+                Math,
+                params.map((item, i) => {
+                  if (i != params.length - 1) {
+                    return item.value;
+                  }
+                }).filter(item => {
+                  return item != undefined && item !== null
+                })
+              );
+              min = Math.min.apply(
+                Math,
+                params.map((item, i) => {
+                  if (i != params.length - 1) {
+                    return item.value;
+                  }
+                }).filter(item => {
+                  return item != undefined && item !== null
+                })
+              );
+              for (var i = 0, l = params.length; i < l; i++) {
+                if (name[i] != '离散率') {
+                  avg += Number(params[i].value);
+                }
+              }
+              avg = (avg / params.length).toFixed(3);
+              relVal += `<div>${params[params.length - 1].marker}${name[params.length - 1]}&nbsp;&nbsp;&nbsp;<span style='float:right;'>&nbsp;&nbsp;${params[params.length - 1].value == max ? "[max]" : params[params.length - 1].value == min ? "[min]" : "      "
+                }</span><span style='float:right'>${params[params.length - 1].value}%</span></div>`;
+              relVal += `<div>&nbsp;&nbsp;&nbsp;<span>平均值</span><span style='float:right'>${avg}h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>`;
+              for (var i = 0, l = params.length; i < l; i++) {
+                if (name[i] == '离散率') {
+                  relVal += ``;
+                } else {
+                  relVal += `<div>${params[i].marker}${name[i]}&nbsp;&nbsp;&nbsp;<span style='float:right;'>&nbsp;&nbsp;${params[i].value == max ? "[max]" : params[i].value == min ? "[min]" : "      "
+                    }</span><span style='float:right'>${params[i].value}h</span></div>`;
+                }
+              }
             }
             return relVal;
           },
         },
         grid: {
           left: "4%",
-          right: "3.5%",
+          right: "4.5%",
           top: "13%",
           bottom: "8%",
         },
         legend: {
           align: "left",
           top: "0px",
+          right: '5%',
+          left: '5%',
           textStyle: {
             color: "#000",
             fontSize: 13,
           },
+          // data: legObj,
           formatter: (params) => {
-            console.log(params);
             return name[params] + "";
           },
           itemGap: 15,
@@ -293,11 +361,47 @@ export default {
               show: false,
             },
           },
+          {
+            name: "%",
+            nameTextStyle: {
+              color: "#000",
+              fontSize: 12,
+              padding: [0, 0, -15, 0],
+            },
+            splitLine: {
+              show: false,
+            },
+            max: this.maxLs > 100 ? null : 100,
+            min: 0,
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: "#000",
+              },
+            },
+            axisLabel: {
+              show: true,
+              textStyle: {
+                color: "#000",
+                padding: 10,
+              },
+              formatter: function (value) {
+                if (value === 0) {
+                  return value;
+                }
+                return value;
+              },
+            },
+            axisTick: {
+              show: false,
+            },
+          },
         ],
         series: serise,
       };
       // 绘制图表
       myChart.setOption(options, true);
+      console.log(myChart, '====macharts数据');
       function debounce(func, ms = 1000) {
         let timer;
         return function (...args) {
@@ -365,14 +469,18 @@ export default {
   font-weight: 700;
   margin-top: 10px;
 }
+
 .info {
   margin-left: 4%;
   margin-top: 15px;
   background: "#fff";
+  float: left;
 }
-/deep/.el-date-editor{
+
+/deep/.el-date-editor {
   margin-top: 20px !important;
 }
+
 /deep/.el-range-separator {
   padding: 0;
 }

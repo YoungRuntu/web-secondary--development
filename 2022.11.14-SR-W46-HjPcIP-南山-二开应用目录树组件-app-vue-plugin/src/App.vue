@@ -88,6 +88,7 @@ export default {
       defaultProps: {
         children: "children",
         label: "name",
+        id: 'data_id'
       },
       count: 1,
       stationTreeData: [],
@@ -283,7 +284,22 @@ export default {
       this.hasChooseData.push(data);
       if (JSON.parse(JSON.stringify(this.huixianData)) !== this.$refs.stationTree.getCheckedKeys().concat(this.$refs.stationTree.getHalfCheckedKeys()).join()) {
         window.localStorage.setItem("hasChecked", JSON.stringify(this.$refs.stationTree.getCheckedNodes()));
-        this.huixianData = this.$refs.stationTree.getCheckedKeys().concat(this.$refs.stationTree.getHalfCheckedKeys()).join();
+        if (this.checked1 && this.$refs.stationTree.getCheckedKeys().concat(this.$refs.stationTree.getHalfCheckedKeys()).length != this.levelData.length) {
+          this.huixianData = [...this.$refs.stationTree.getCheckedKeys()]
+          this.$refs.stationTree.getCheckedKeys().forEach((x, i) => {
+            let a = this.findNode(this.stationTreeData, (node) => {
+              if (node.data_id == x) {
+                if (this.huixianData.indexOf(node.parent_id) == -1) {
+                  this.huixianData.splice(this.huixianData.indexOf(x), 0, node.parent_id)
+                }
+                return node.name === x
+              }
+            })
+          })
+          this.huixianData = this.huixianData.join();
+        } else {
+          this.huixianData = this.$refs.stationTree.getCheckedKeys().concat(this.$refs.stationTree.getHalfCheckedKeys()).join();
+        }
         console.log(this.huixianData);
         if (this.$refs.stationTree.getCheckedKeys().concat(this.$refs.stationTree.getHalfCheckedKeys()).length == this.levelData.length) {
           this.checked2 = true;
@@ -294,6 +310,18 @@ export default {
         this.triggerEvent(this.huixianData);
       }
     },
+    //递归方法
+    findNode(tree, func) {
+      for (const node of tree) {
+        if (func(node)) return node
+        if (node.children) {
+          const res = this.findNode(node.children, func)
+          if (res) return res
+        }
+      }
+      return null
+    },
+    //找到节点插入数据
     handleNodeClick(data) {
       console.log(data);
     },

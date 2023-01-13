@@ -3,13 +3,13 @@
   <div className="analyzer-secondary" :style="{
     width: '100%',
     height: '100%',
-  }" :ref="id" :id="id">
+  }" :ref="id" :id="id" class="analyzer-secondary">
 
     <div class="two_table_han">
       <div class="two_table_head">
         <div class="two_table_title">断面流量</div>
         <div class="two_table_radio">
-          <el-radio-group v-model="radio2" size="medium" @change="radioChange">
+          <el-radio-group v-model="radio2" size="small" @change="radioChange">
             <el-radio-button label="小时累计"></el-radio-button>
             <el-radio-button label="今日累计"></el-radio-button>
             <el-radio-button label="本月累计"></el-radio-button>
@@ -24,7 +24,7 @@
           <template slot-scope="scope">
             <div class="title_che" :style="{ color: titleColor, fontSize: titleSize, fontFamily: titlefamily }">
               <div class="title_shangx">{{ scope.row.label }}</div>
-              <div>（辆/h）</div>
+              <div>(辆/h)</div>
             </div>
           </template>
 
@@ -35,12 +35,12 @@
           <template slot-scope="scope">
             <div class="huanbi_che">
               <div :style="{ color: numColor, fontSize: numSize + 'px', fontFamily: numfamily }">{{
-                  scope.row[item].flow_num
+                scope.row[item].flow_num
               }}</div>
               <div
                 :style="{ color: scope.row[item].flow_rate > 0 ? rateJustColor : rateLossColor, fontSize: rateSize + 'px', fontFamily: ratefamily }">
                 <i :class="`el-icon-caret-${scope.row[item].flow_rate > 0 ? 'top' : 'bottom'}`"></i> {{
-    Number(scope.row[item].flow_rate).toFixed(rateDigit)
+  Number(scope.row[item].flow_rate).toFixed(rateDigit)
                 }}%
               </div>
 
@@ -131,7 +131,9 @@ export default {
         name: '王小虎',
         address: '上海市普陀区金沙江路 1516 弄'
       }],
-      cardData: [],
+      cardData: [
+
+      ],
       colunmData: [],
       assetId: this.options?.externalVariables?.assetId || '06b3319b-5b5b-535b-99ee-9c6eb6fc909b',
       //头部颜色
@@ -164,6 +166,8 @@ export default {
 
       dataWidth: this.options?.externalVariables?.dataWidth || '180',
       dataHeight: this.options?.externalVariables?.dataHeight || '80',
+      barDataOrder: this.options?.externalVariables?.barDataOrder || '南京段,溧马段,漂芜段,溧阳段,宜兴段'
+
     };
   },
   computed: {},
@@ -179,12 +183,14 @@ export default {
     //这里用于将配置项的参数传入，与用户的代码进行交互，按照自己的业务逻辑填写
 
     this.queryTable()
+    // this.tempData()
   },
   methods: {
 
     radioChange() {
-      let obj = { 小时累计: 'hour', 今日累计: 'day', 本月累计: 'month', }
+      let obj = { 小时累计: 'hour', 今日累计: 'day', 本月累计: 'monthavg', }
       this.type = obj[this.radio2]
+      this.handleValueChange(this.type)
       this.queryTable()
     },
     //查询表方法
@@ -200,27 +206,28 @@ export default {
           let cardData = []
           let item = {}
           let colunmData = []
-          res.data.forEach(x => {
+          let resData = res.data
+          let legendData = this.barDataOrder.split(",");
+          legendData.forEach((item, index) => {
+            resData.forEach((e) => {
+              if (e.name == item) {
+                tempDat.push(e);
+              }
+            });
+          });
+          tempDat.forEach(x => {
             colunmData.push(x.name)
             let a = JSON.stringify({
               flow_num: x.up_num,
               flow_rate: x.up_rate,
-
               truck_flow_num: x.truck_flow_num,
-              car_flow_num
-                :
-                x.car_flow_num,
-              car_truck_basis_rate
-                :
-                x.car_truck_basis_rate,
-              car_truck_round_rate
-                :
-                x.car_truck_round_rate,
+              car_flow_num: x.car_flow_num,
+              car_truck_basis_rate: x.car_truck_basis_rate,
+              car_truck_round_rate: x.car_truck_round_rate,
             })
             item[x.name] = {
               flow_num: x.up_num,
               flow_rate: x.up_rate,
-
               truck_flow_num: x.truck_flow_num,
               car_flow_num: x.car_flow_num,
               car_truck_basis_rate: x.car_truck_basis_rate,
@@ -230,20 +237,14 @@ export default {
           item.label = '上行'
           cardData.push(item)
           let item2 = {}
-          res.data.forEach(x => {
+          tempDat.forEach(x => {
             item2[x.name] = {
               flow_num: x.down_num,
               flow_rate: x.down_rate,
               truck_flow_num: x.truck_flow_num,
-              car_flow_num
-                :
-                x.car_flow_num,
-              car_truck_basis_rate
-                :
-                x.car_truck_basis_rate,
-              car_truck_round_rate
-                :
-                x.car_truck_round_rate,
+              car_flow_num: x.car_flow_num,
+              car_truck_basis_rate: x.car_truck_basis_rate,
+              car_truck_round_rate: x.car_truck_round_rate,
             }
           });
           item2.label = '下行'
@@ -253,7 +254,6 @@ export default {
         } else {
           this.cardData = []
           this.colunmData = []
-          console.log(cardData, '=====id');
         }
 
 
@@ -261,6 +261,78 @@ export default {
         this.cardData = []
         this.colunmData = []
       })
+    },
+    //零时测试数据
+    tempData() {
+      let res = {
+        data: [{ "car_flow_num": "5", "up_rate": "2", "car_truck_basis_rate": "8", "data_id": "main_flow_section_stat001", "down_rate": "4", "name": "南京", "car_truck_round_rate": "7", "truck_flow_num": "6", "up_num": "1", "type": "hour", "down_num": "3" },
+        { "car_flow_num": "5", "up_rate": "2", "car_truck_basis_rate": "8", "data_id": "main_flow_section_stat001", "down_rate": "4", "name": "南京端", "car_truck_round_rate": "7", "truck_flow_num": "6", "up_num": "1", "type": "hour", "down_num": "3" },
+        { "car_flow_num": "5", "up_rate": "2", "car_truck_basis_rate": "8", "data_id": "main_flow_section_stat001", "down_rate": "4", "name": "南京器", "car_truck_round_rate": "7", "truck_flow_num": "6", "up_num": "1", "type": "hour", "down_num": "3" },
+        { "car_flow_num": "5", "up_rate": "2", "car_truck_basis_rate": "8", "data_id": "main_flow_section_stat001", "down_rate": "4", "name": "南京二", "car_truck_round_rate": "7", "truck_flow_num": "6", "up_num": "1", "type": "hour", "down_num": "3" },
+        ]
+      }
+      let cardData = []
+      let item = {}
+      let colunmData = []
+      let tempDat = []
+      let resData = res.data
+      let legendData = this.barDataOrder.split(",");
+      legendData.forEach((item, index) => {
+        resData.forEach((e) => {
+          if (e.name == item) {
+            tempDat.push(e);
+          }
+        });
+      });
+      tempDat.forEach(x => {
+        colunmData.push(x.name)
+        let a = JSON.stringify({
+          flow_num: x.up_num,
+          flow_rate: x.up_rate,
+          truck_flow_num: x.truck_flow_num,
+          car_flow_num
+            :
+            x.car_flow_num,
+          car_truck_basis_rate
+            :
+            x.car_truck_basis_rate,
+          car_truck_round_rate
+            :
+            x.car_truck_round_rate,
+        })
+        item[x.name] = {
+          flow_num: x.up_num,
+          flow_rate: x.up_rate,
+
+          truck_flow_num: x.truck_flow_num,
+          car_flow_num: x.car_flow_num,
+          car_truck_basis_rate: x.car_truck_basis_rate,
+          car_truck_round_rate: x.car_truck_round_rate,
+        }
+      });
+      item.label = '上行'
+      cardData.push(item)
+      let item2 = {}
+      tempDat.forEach(x => {
+        item2[x.name] = {
+          flow_num: x.down_num,
+          flow_rate: x.down_rate,
+          truck_flow_num: x.truck_flow_num,
+          car_flow_num
+            :
+            x.car_flow_num,
+          car_truck_basis_rate
+            :
+            x.car_truck_basis_rate,
+          car_truck_round_rate
+            :
+            x.car_truck_round_rate,
+        }
+      });
+      item2.label = '下行'
+      cardData.push(item2)
+      this.cardData = cardData
+      this.colunmData = colunmData
     },
     // 逻辑控制用，不可删，return内容可改
     Event_Center_getName() {
@@ -279,16 +351,31 @@ export default {
         //payload需为一个object，如msgCompConfig.js定义的payload则为{value:""}这样的形式
         payload
       );
-    }
+    },
+    handleValueChange(value) {
+      this.triggerEvent("valueChange",
+        {
+          value
+        }
+      )
+    },
+
+
     //do_EventCenter_前缀开头的方法，用来定义对应动作
   }
 };
 </script>
 
 <style lang="less" scoped>
+// .analyzer-secondary {
+//   background: url('./api/bg.png');
+// }
+
 .two_table_han {
-  background: #000319;
+  // background: #000319;
+  background-color: transparent;
   padding: 20px;
+  // width: 428px;
 
   .two_table_head {
     display: flex;
@@ -300,6 +387,8 @@ export default {
       /deep/.el-radio-button__inner {
         background: #041c36;
         border: 1px #0f4b71 solid;
+        width: 64px;
+        padding: 7px 8px;
         color: #89a7bb;
 
       }
@@ -358,12 +447,12 @@ export default {
   }
 
   /deep/.el-table thead tr th.is-leaf {
-    background: #171d32;
+    background: #FFFFFF19;
     border: none;
   }
 
   /deep/.el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
-    background: #171d32;
+    background: #FFFFFF19;
   }
 
 
@@ -373,17 +462,19 @@ export default {
   }
 
   /deep/ .el-table--enable-row-hover .el-table__body tr.el-table__row--striped:hover>td.el-table__cell {
-    background: #171d32;
+    background: #FFFFFF19;
   }
 
   /deep/.el-table__row :last-child {
     border-radius: 0 7px 7px 0;
+  }
 
+  /deep/ .el-table .cell {
+    padding: 0px;
   }
 
   /deep/.el-table__row :first-child {
     border-radius: 7px 0 0 7px;
-
 
   }
 }
