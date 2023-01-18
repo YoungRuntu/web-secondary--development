@@ -186,8 +186,8 @@ export default {
               info.push(Number(x[key]).toFixed(1))
             }
           })
-          this.yData.push(info)
-          this.name.push('离散率')
+          this.yData.unshift(info)
+          this.name.unshift('离散率')
           this.initEcharts(this.xData, this.name, this.yData);
         })
         .catch((err) => {
@@ -236,7 +236,7 @@ export default {
               max = Math.max.apply(
                 Math,
                 params.map((item, i) => {
-                  if (i != params.length - 1) {
+                  if (i != 0) {
                     return item.value;
                   }
                 }).filter(item => {
@@ -246,7 +246,7 @@ export default {
               min = Math.min.apply(
                 Math,
                 params.map((item, i) => {
-                  if (i != params.length - 1) {
+                  if (i != 0) {
                     return item.value;
                   }
                 }).filter(item => {
@@ -258,9 +258,9 @@ export default {
                   avg += Number(params[i].value);
                 }
               }
-              avg = (avg / params.length).toFixed(3);
-              relVal += `<div>${params[params.length - 1].marker}${name[params.length - 1]}&nbsp;&nbsp;&nbsp;<span style='float:right;'>&nbsp;&nbsp;${params[params.length - 1].value == max ? "[max]" : params[params.length - 1].value == min ? "[min]" : "      "
-                }</span><span style='float:right'>${params[params.length - 1].value}%</span></div>`;
+              avg = (avg / (params.length - 1)).toFixed(3);
+              relVal += `<div>${params[0].marker}${name[0]}&nbsp;&nbsp;&nbsp;<span style='float:right;'>&nbsp;&nbsp;${params[0].value == max ? "[max]" : params[0].value == min ? "[min]" : "      "
+                }</span><span style='float:right'>${params[0].value}%</span></div>`;
               relVal += `<div>&nbsp;&nbsp;&nbsp;<span>平均值</span><span style='float:right'>${avg}h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>`;
               for (var i = 0, l = params.length; i < l; i++) {
                 if (name[i] == '离散率') {
@@ -283,18 +283,24 @@ export default {
         legend: {
           align: "left",
           top: "0px",
-          right: '5%',
-          left: '5%',
+          // right: '5%',
+          // left: '5%',
           textStyle: {
             color: "#000",
             fontSize: 13,
           },
           // data: legObj,
           formatter: (params) => {
-            return name[params] + "";
+            if (name[params] == '离散率') {
+              return name[params] + "(%)";
+            } else {
+              return name[params] + "";
+            }
+
           },
           itemGap: 15,
           itemWidth: 40,
+          width: 1025,
         },
         xAxis: [
           {
@@ -401,7 +407,6 @@ export default {
       };
       // 绘制图表
       myChart.setOption(options, true);
-      console.log(myChart, '====macharts数据');
       function debounce(func, ms = 1000) {
         let timer;
         return function (...args) {
