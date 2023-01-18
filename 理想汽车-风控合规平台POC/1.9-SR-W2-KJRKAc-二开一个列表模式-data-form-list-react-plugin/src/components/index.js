@@ -1,5 +1,5 @@
 import DesignConfiguration from "./designConfiguration";
-import Main from "./main";
+import Main from "./MindMap";
 import Development from "./development";
 
 export {
