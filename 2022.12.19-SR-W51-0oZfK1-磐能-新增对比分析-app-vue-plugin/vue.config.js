@@ -4,6 +4,7 @@ module.exports = {
     disableHostCheck: true,
     proxy: {
       "/api": {
+        target: "https://zhny.hn.sgcc.com.cn/",
         // target: "http://10.15.70.123:12203",
         // target: "http://10.15.70.38:18080/",
         target: "http://121.36.134.217:47264/",

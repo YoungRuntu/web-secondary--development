@@ -5,7 +5,11 @@
         style="line-height: 80px; margin-right: 5px; margin-left: 15px; font-weight: 700; font-size: 14px">日期选择:</span><el-date-picker
         v-model="dataPicker" type="daterange" format="yyyy-MM-dd" value-format="yyyy-MM-dd" range-separator="至"
         start-placeholder="开始日期" end-placeholder="结束日期" @change="dateChange" :picker-options="pickerOptions">
-      </el-date-picker>
+        <span
+          style="line-height: 80px; margin-right: 5px; margin-left: 15px; font-weight: 700; font-size: 14px">日期选择:</span><el-date-picker
+          v-model="dataPicker" type="daterange" format="yyyy-MM-dd" value-format="yyyy-MM-dd" range-separator="至"
+          start-placeholder="开始日期" end-placeholder="结束日期" @change="dateChange" :picker-options="pickerOptions">
+        </el-date-picker>
     </div>
     <p class="chartsTitle">等效时数对比图</p>
     <div style="height: 400px; width: 100%" id="contrastCharts"></div>
@@ -407,6 +411,7 @@ export default {
       };
       // 绘制图表
       myChart.setOption(options, true);
+      console.log(myChart, '====macharts数据');
       function debounce(func, ms = 1000) {
         let timer;
         return function (...args) {

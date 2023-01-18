@@ -130,7 +130,8 @@ const Workbench = (props) => {
                   return (
                      item.key && {
                         key: item.key,
-                        label: props.intlGetKey(item.label),
+                        // label: props.intlGetKey(item.label),
+                        label: item.label,
                         icon: <img src={item.isCheck ? item.checkImg : item.unCheckedImg} alt="" key={index} />,
                      }
                   );
@@ -140,7 +141,6 @@ const Workbench = (props) => {
                }}
             />
          </Sider>
-         {/* 右侧区域 */}
          {mentChecked == "0" && <InitiateFlow />}
          {mentChecked == "1" && <PendingHandle {...props} />}
          {mentChecked == "2" && <AlreadyHandle {...props} />}

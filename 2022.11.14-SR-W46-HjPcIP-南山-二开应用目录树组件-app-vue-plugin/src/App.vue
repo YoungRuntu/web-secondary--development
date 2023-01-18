@@ -477,7 +477,6 @@ export default {
 .two_tree {
   .el-tree-node {
     .el-tree-node__content {
-
       margin-bottom: 6px;
     }
 

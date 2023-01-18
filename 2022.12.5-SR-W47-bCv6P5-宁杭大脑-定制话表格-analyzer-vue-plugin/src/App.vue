@@ -193,6 +193,10 @@ export default {
       this.type = obj[this.radio2]
       this.handleValueChange(this.type)
       this.queryTable()
+      //触发逻辑控制
+      this.triggerEvent('tabsChange', {
+        tabValue: this.radio2
+      })
     },
     //查询表方法
     queryTable() {
