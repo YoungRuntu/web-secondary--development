@@ -11,7 +11,11 @@ export const getAssets = (cata, type, params2) =>
  * 查询资产
  */
 export const queryAssetById = (id, count = 10000) =>
-  request.post(`/asset/getAssetData?asset_id=${id}}&count=${count}`, { filters: [] });
+  request.post(`/asset/getAssetData?asset_id=${id}&count=${count}`, { filters: [] });
+
+export const getUser = () =>
+  request.get(`system/authority/user`);
+
 
 /**
 * 查询资产数据
