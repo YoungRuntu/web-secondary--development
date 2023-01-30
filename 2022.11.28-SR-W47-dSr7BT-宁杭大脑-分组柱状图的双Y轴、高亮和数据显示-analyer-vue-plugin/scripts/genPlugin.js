@@ -97,7 +97,7 @@ let zip = new AdmZip();
 zip.addLocalFolder(path.resolve(__dirname, "../pluginTemp"));
 let pluginPath = path.resolve(
   __dirname,
-  `../${requirementNumber}-${requirementName}${new Date().Format("yyyy年MM月dd日 HH时mm分")}.zip`
+  `../plugin-${requirementNumber}-${requirementName}${new Date().Format("yyyy年MM月dd日 HH时mm分")}.zip`
 );
 zip.writeZip(pluginPath);
 fs.writeFileSync(path.resolve(__dirname, "../temp"), pluginPath, "utf-8");

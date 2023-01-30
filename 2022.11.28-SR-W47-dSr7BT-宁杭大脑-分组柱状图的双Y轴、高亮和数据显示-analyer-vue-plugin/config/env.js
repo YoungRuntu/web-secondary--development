@@ -7,7 +7,6 @@ const pluginTempConfig = require("../pluginTemp/config.json");
 
 // Make sure that including paths.js after env.js will read .env variables.
 delete require.cache[require.resolve("./paths")];
-
 const NODE_ENV = process.env.NODE_ENV;
 if (!NODE_ENV) {
   throw new Error(
@@ -92,6 +91,7 @@ function getClientEnvironment(publicUrl) {
         // It is defined here so it is available in the webpackHotDevClient.
         FAST_REFRESH: process.env.FAST_REFRESH !== "false",
         CUSTOM_PLUGIN_ID: pluginTempConfig.id,
+        CUSTOM_PLUGIN:pluginTempConfig
       }
     );
   // Stringify all values so we can feed into webpack DefinePlugin
