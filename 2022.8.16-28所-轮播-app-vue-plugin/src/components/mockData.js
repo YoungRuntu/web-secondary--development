@@ -179,7 +179,7 @@ export const customConfig = {
   detailsUrl: 'dsdd',
   keyField: 'data_id',
   imgField: 'Urlddd',
-  sidebar: 'bottom',
+  sidebar: '',
   titleField: 'title111',
   buttons: JSON.stringify({
     defaultValue: "战勤部",
