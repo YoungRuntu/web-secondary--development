@@ -1,7 +1,7 @@
 {
-  "id": "8a2581f6-198f-4327-9e9a-c6f06535832f",
+  "id": "b02fa842-e7cd-4b59-85f5-ec4660f9ab61",
   "type": "app",
-  "main": "app.33539567.js",
+  "main": "app.39a608b0.js",
   "version": "2",
   "props": {
     "type": "customize",
@@ -19,7 +19,8 @@
       "titleField",
       "detailsUrl",
       "keyField",
-      "height"
+      "height",
+      "tokenType"
     ]
   }
 }
