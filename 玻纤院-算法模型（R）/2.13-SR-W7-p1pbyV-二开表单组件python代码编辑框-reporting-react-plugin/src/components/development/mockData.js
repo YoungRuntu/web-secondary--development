@@ -1,4 +1,4 @@
-export const data = "123";
+export const data = "";
 const CONFIG_JSON_ID = process.env.CONFIG_JSON_ID;
 let customConfig =
   JSON.parse(localStorage.getItem(`reporting-secondary-${CONFIG_JSON_ID}`))
