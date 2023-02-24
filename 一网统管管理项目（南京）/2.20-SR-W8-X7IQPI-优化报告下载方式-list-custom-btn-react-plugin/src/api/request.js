@@ -1,19 +1,10 @@
 import axios from "axios";
 import qs from "querystringify";
 
-let apiContextPath = "";
-if (process.env.NODE_ENV === "development") {
-  document.cookie =
-    "token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3NzIwMzc5NzIzNiwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.MtgbuqC2iwCT8HYAF-q3gR97lOt-i8ACDYtSJL4NizY";
-  document.cookie =
-    "refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY3NjAxODM5MTIwM30.lVjL20oBp38GPlC6l5Zu0Ncu_NmmeB0tZX0ntHcsOj0";
-  document.cookie = "username=admin";
-  document.cookie = "windowOnline=true";
-  apiContextPath = "/api";
-}
+// const apiContextPath = "http://192.168.1.240:43214";
 
 const instance = axios.create({
-  baseURL: `${apiContextPath}/sdata/rest`,
+  baseURL: `/sdata/rest`,
   timeout: 60000,
   validateStatus: function (status) {
     return status >= 200 && status < 300; // default
@@ -28,7 +19,7 @@ const instance = axios.create({
 instance.defaults.headers.post["Content-Type"] = "application/json";
 
 instance.interceptors.response.use(
-  response => {
+  (response) => {
     let { data } = response;
     if (typeof data === "string") {
       data = JSON.parse(data);
@@ -44,7 +35,7 @@ instance.interceptors.response.use(
     response.data = data && data.result;
     return response;
   },
-  error => {
+  (error) => {
     if (error.response && error.response.status === 401) {
       return;
     }
