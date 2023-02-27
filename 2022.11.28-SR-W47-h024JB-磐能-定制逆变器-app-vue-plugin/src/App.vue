@@ -95,7 +95,7 @@ export default {
          // 树形控件ID
          ids: "",
          // 日期选择器
-         datePicke: [new Date(new Date().getTime() - 3600 * 1000 * 24 * 7).getTime(), new Date().getTime()],
+         datePicke: [new Date(new Date().getTime() - 3600 * 1000 * 24 * 6).getTime(), new Date().getTime()],
          // 表格数据
          tableData: [],
          // 表格加载
@@ -523,8 +523,13 @@ export default {
 
       // 添加日期选择器图标
       addDatePickerIcon() {
+         let icon = $("#datePickIcon_nbq");
+         if (icon[0]) {
+            icon.remove();
+         }
+
          let datepicker_icon = $(".el-range__close-icon");
-         let iconDom = `<img src="${dateicon}" width="100%" height="100%" />`;
+         let iconDom = `<img id="datePickIcon_nbq" src="${dateicon}" width="100%" height="100%" />`;
          datepicker_icon.append(iconDom);
       },
 
