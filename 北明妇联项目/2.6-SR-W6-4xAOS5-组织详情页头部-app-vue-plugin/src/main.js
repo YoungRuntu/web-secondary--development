@@ -93,7 +93,6 @@ if (process.env.NODE_ENV !== "production") {
     (dom, props, context, eventBus) => {
       props.eventBus = eventBus;
       props.mainInit = mainInit;
-
       if (!window.VueRef) {
         window.VueRef = loadScript('/static/vue.min.js').then(() => {
           return Promise.all([loadScript("/static/element-ui/index.js"), loadScript("/static/vant/vant.min.js")]);
