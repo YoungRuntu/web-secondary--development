@@ -170,19 +170,18 @@ const App = (props) => {
 
   const handlePanNengClick = ({ key, isSubMenu }, it) => {
     let key1 = key?.split("#")[0];
+    let isTack = key?.split("#")[1] != 2
     initData(key1, data);
     setKeys(key1);
-    if (customConfig.onPageTabsChange && (it?.children?.length === 0 || !it?.children || hidenNameList.includes(it.id)) && key1 !== keys) {
-      // window.PubSub.publish("menuClick", { key, isSubMenu });
+    if (customConfig.onPageTabsChange && (it?.children?.length === 0 || !it?.children || hidenNameList.includes(it.id)) && key1 !== keys && isTack == true) {
       // customConfig.onPageTabsChange(key)
       const customEvent = new CustomEvent("JUMP_APP_TAB", {
         detail: {
-          key,
+          key, isSubMenu
         },
       });
       document.dispatchEvent(customEvent);
 
-      // console.log(customConfig.onPageTabsChange, '----arta');
     }
   };
 
@@ -215,7 +214,7 @@ const App = (props) => {
                 onClick={() =>
                   handlePanNengClick({
                     key: (item.type === 1 ? "system" : item.id) + "#" + item.type,
-                    isSubMenu: true,
+                    // isSubMenu: true,
                   })
                 }
               >
@@ -289,7 +288,7 @@ const App = (props) => {
                             <div
                               onClick={() =>
                                 handlePanNengClick({
-                                  key: (item.type === 1 ? "system" : item.id) + "#" + item.type,
+                                  key: (item.type === 1 ? "system" : item.id) + "#" + item.type, isSubMenu: true,
                                 })
                               }
                               key={(item.type === 1 ? "system" : item.id) + "#" + item.type}
