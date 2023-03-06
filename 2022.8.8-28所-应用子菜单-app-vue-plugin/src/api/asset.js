@@ -19,3 +19,9 @@ request.post(`/asset/data?id=${id}`);
 */
 export const getMenu = () =>
   request.get(`/28s/datapp/queryUseMenusByUserId`);
+
+
+/**
+ * 获取 code
+ */
+export const getCode = () => request.get('systhirdapp/user/getCode')

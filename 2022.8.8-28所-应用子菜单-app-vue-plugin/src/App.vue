@@ -44,7 +44,7 @@
 // import appService from "@njsdata/app-sdk";
 import eventActionDefine from './components/msgCompConfig'
 import './index.css'
-import { getAssetById, queryAssetById, getMenu } from './api/asset'
+import { getAssetById, queryAssetById, getMenu, getCode } from './api/asset'
 
 export default {
   name: 'App',
@@ -78,7 +78,8 @@ export default {
       filterWords: "",
       userRole: "",
       rowNum: 1,
-      pageNum: 1
+      pageNum: 1,
+      ssoCode: ''
     }
   },
   computed: {
@@ -119,6 +120,7 @@ export default {
     this.filterWords = this.customConfig?.filterWords
     this.rowNum = parseInt(this.customConfig?.rowNum)
     this.userRole = window.currentUser?.id ? window.currentUser?.id : "1234567890"
+    this.getSSOCode()
     this.getData()
     this.$nextTick(() => {
       this.appendStyle()
@@ -127,6 +129,10 @@ export default {
     componentId && window.componentCenter?.register(componentId, 'comp', this, eventActionDefine)
   },
   methods: {
+    async getSSOCode() {
+      const { data } = await getCode()
+      this.ssoCode = data
+    },
     appendStyle() {
       let style = `#${this.id} .menuLitm:hover{color:${this.pinPaiTextColor} !important;background:${this.pinPaiColor} !important;}`;
       if (this.$refs[this.id]) {
@@ -143,25 +149,6 @@ export default {
           this.imgSrc = y.image
         }
       })
-      // 旧版查询资产
-      // const params = {
-      //   column: this.filterWords,
-      //   compareObj: this.userRole,
-      //   datatype: 0,
-      //   type: 10
-      // }
-      // let { data } = await queryAssetById(this.assetId,params)
-      // // let { data } = await getAssetById(this.assetId)
-      // let key = data[0]
-      // let value = data[1]
-      // this.menuListAll = value.map((val) => {
-      //   let obj = {}
-      //   key.forEach((k, index) => {
-      //     obj[k.col_name] = val[index]
-      //   })
-      //   return obj
-      // })
-      // console.log('this.menuListAll',this.menuListAll);
 
       // 新版查询应用商店常用接口
       this.menuListAll = []
@@ -179,7 +166,6 @@ export default {
       dataList.forEach(x=>{
         this.menuListAll.push(x)
       })
-      // console.log('this.cyMenuList=',this.menuListAll);
       this.getMenuData()
     },
     async getMenuData() {
@@ -232,7 +218,16 @@ export default {
     },
     setActive(i, item) {
       this.active = i
-      window.open(item[this.menuTo])
+
+      const url = item[this.menuTo]
+
+      const target = new URL(url, location.origin)
+
+      if (item.isSSOCode === '1') {
+        target.searchParams.append('code', this.ssoCode)
+      }
+      // console.log(target.toString())
+      window.open(target.toString())
     },
     typeBtn(item, i) {
       this.menuActive = i
