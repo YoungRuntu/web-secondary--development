@@ -1,19 +1,12 @@
-import axios from 'axios';
-import qs from 'querystringify';
+import axios from "axios";
+import qs from "querystringify";
 
-if (process.env.NODE_ENV === 'development') {
-  document.cookie =
-    'token=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY2MTI0Mjc3NjIxNSwidXNlcklkIjoiMTIzNDU2Nzg5MCJ9.sjune-SuLcKMR-Z1Fij0ColkRTJY3IsAjCp-D55FLak';
-  document.cookie =
-    'refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJsb2dpblRpbWVzdGFtcCI6MTY2MTI0Mjc3NjIxN30.21pmw9mah1joLNogsiBpkSUUDIikP2bMDr93y7rpCLs';
-  document.cookie = 'username=admin';
-  document.cookie = 'windowOnline=true';
-}
+// const apiContextPath = "http://192.168.1.240:43214";
 
 const instance = axios.create({
   baseURL: `${process.env.REACT_APP_API}/sdata/rest`,
   timeout: 60000,
-  validateStatus: function(status) {
+  validateStatus: function (status) {
     return status >= 200 && status < 300; // default
   },
   headers:
@@ -23,12 +16,12 @@ const instance = axios.create({
       : {},
 });
 
-instance.defaults.headers.post['Content-Type'] = 'application/json';
+instance.defaults.headers.post["Content-Type"] = "application/json";
 
 instance.interceptors.response.use(
-  response => {
+  (response) => {
     let { data } = response;
-    if (typeof data === 'string') {
+    if (typeof data === "string") {
       data = JSON.parse(data);
     }
     if (data && data.status !== 200 && !(data instanceof Blob)) {
@@ -42,7 +35,7 @@ instance.interceptors.response.use(
     response.data = data && data.result;
     return response;
   },
-  error => {
+  (error) => {
     if (error.response && error.response.status === 401) {
       return;
     }
