@@ -408,6 +408,10 @@ export default {
     .organization_head_right {
       .organization_title {
         height: 28px;
+        max-width: 270px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
         font-size: 20px;
         font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;

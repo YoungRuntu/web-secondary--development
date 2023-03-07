@@ -32,16 +32,12 @@
 </template>
 
 <script>
-// import Vue from "vue"
-const Vue = window.Vue
-import { TimelineItem, Timeline } from 'view-design';
-import 'view-design/dist/styles/iview.css';
+// const Vue = window.Vue
 import { queryAssetById, userQuery, queryTimeline } from "../../api/asset";
 import { translatePlatformDataToJsonArray } from '../../utils/handleData'
 import moment from "moment";
 // Vue.prototype.moment = moment
-window?.Vue?.component('Timeline', Timeline);
-window?.Vue?.component('TimelineItem', TimelineItem);
+
 const mockData = [
   { creat_time: '2022-03-22', picture: '[{"uid":"rc-upload-1676013318689-3","name":"a86afaa4-1fce-4bac-b8ce-b948e2e475b8.png","url":"/storage_area/form/1234567890/45ee97adfa884a329a3d86a0d61c528a.png"}]', title: 'hdvjhasgdhasdgg' },
   { creat_time: '2021-02-22', picture: '[{"uid":"rc-upload-1676013318689-3","name":"a86afaa4-1fce-4bac-b8ce-b948e2e475b8.png","url":"/storage_area/form/1234567890/45ee97adfa884a329a3d86a0d61c528a.png"}]', title: 'hdvjhasgdhasdgg' },
@@ -87,7 +83,7 @@ export default {
   },
   mounted() {
     //此方法封装了事件注册，不可删除
-    this.mainInit(this);
+    // this.mainInit(this);
     this.handleQueryData()
     // this.handleFilterTime()
   },
@@ -100,7 +96,6 @@ export default {
     async handleQueryData() {
       try {
         let { data } = await userQuery()
-        console.log(data, '------a');
         queryTimeline({ user_id: data.id }).then(res => {
           let result = res.data
           this.handleFilterTime(result)
@@ -150,7 +145,6 @@ export default {
 
       })
       this.timeLineData = timeLineData
-      console.log('------>时间过滤', timeLineData, mockData);
     },
     /**
    * 用于触发事件的方法，window.eventCenter?.triggerEvent封装了一层，

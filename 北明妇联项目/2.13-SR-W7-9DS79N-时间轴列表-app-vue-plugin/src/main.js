@@ -1,7 +1,9 @@
 // import Vue from "vue";
 import App from "./App.vue";
 import MsgCompConfig from "./components/main/msgCompConfig.js";
-import { Development } from "@/components/index.js";
+import { Main } from "@/components/index.js";
+import { TimelineItem, Timeline } from 'view-design';
+import 'view-design/dist/styles/iview.css';
 import Utils from "@/utils/index.js";
 const configJson = require("../pluginTemp/config.json");
 
@@ -19,7 +21,7 @@ function loadScript(url) {
       };
     } else { //Others
       script.onload = function () {
-        resolve()
+        resolve('a')
       };
     }
     script.src = url;
@@ -78,9 +80,9 @@ const mainInit = (Main) => {
 
 
 if (process.env.NODE_ENV !== "production") {
-  // new Vue({
-  //   render: h => <Development mainInit={mainInit} />
-  // }).$mount("#app");
+  new Vue({
+    render: h => <Main />
+  }).$mount("#app");
 } else {
   if (!window.CUSTOM_PLUGIN) {
     window.CUSTOM_PLUGIN = new Map();
@@ -90,7 +92,6 @@ if (process.env.NODE_ENV !== "production") {
     (dom, props, context, eventBus) => {
       props.eventBus = eventBus;
       props.mainInit = mainInit;
-      console.log(window.VueRef, '---808');
       if (!window.VueRef) {
         window.VueRef = loadScript('/static/vue.min.js').then(() => {
           return Promise.all([loadScript("/static/element-ui/index.js"), loadScript("/static/vant/vant.min.js")]);
@@ -98,7 +99,9 @@ if (process.env.NODE_ENV !== "production") {
         loadStyle("/static/element-ui/theme-chalk/index.min.css");
         loadStyle("/static/vant/lib/index.css");
       }
-      window.VueRef.then(() => {
+      window.VueRef?.then((a) => {
+        window.Vue?.component('Timeline', Timeline);
+        window.Vue?.component('TimelineItem', TimelineItem);
         run(dom, props)
       })
     }

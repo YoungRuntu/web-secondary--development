@@ -22,7 +22,7 @@ const formatData = (data, nameList) => {
 };
 
 const App = (props) => {
-  console.log('**props**', props);
+  console.log("**props**", props);
   const [openKeys, setOpenKeys] = useState([]);
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState(mockData);
@@ -52,7 +52,7 @@ const App = (props) => {
     // var newEvent = new Event("falseMenuClick", { bubbles: true, cancelable: true, composed: true });
     window.addEventListener("MenuClick", (e) => {
       console.log("进来了", e);
-      props.customConfig.setAppMenucollapsed(e.detail.tf)
+      props.customConfig.setAppMenucollapsed(e.detail.tf);
       setCollapsed(e.detail.tf);
     });
     if (window.APP_SDK_DATA) {
@@ -135,7 +135,9 @@ const App = (props) => {
     });
     setKeys(selectedKeys[0]);
   };
-
+  var MenuChange = new CustomEvent("MenuChange", {
+    detail: {},
+  });
   const onOpenChange = (keys) => {
     console.log("keys", keys);
     const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
@@ -180,8 +182,8 @@ const App = (props) => {
           key, isSubMenu
         },
       });
+      window.dispatchEvent(MenuChange);
       document.dispatchEvent(customEvent);
-
     }
   };
 
