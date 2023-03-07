@@ -3,7 +3,7 @@ import App from "./App.vue";
 // 按需引入组件，引入方式见https://element.eleme.cn/#/zh-CN/component/quickstart#an-xu-yin-ru
 // import { Input, Select, Option, Button, Avatar, Tooltip } from "element-ui";
 
-Vue.config.productionTip = false;
+// Vue.config.productionTip = false;
 // Vue.use(Input);
 // Vue.use(Select);
 // Vue.use(Option);
@@ -45,7 +45,7 @@ if (process.env.NODE_ENV !== "production") {
   // 添加 customConfig 进行测试
   let customConfig = {
     assetId: "54b18540-a396-41a6-9333-34ab04336df0",//xjg_application_store_often
-    menuId: "0ed9c06a-eec1-eb09-498e-faf3963beec0",
+    menuId: "5d00e298-1b8c-4a64-8406-00a45848c5bc",
     title: "应用工具",
     moreTo: "http://baidu.com",
     menuTitle: "name",
@@ -100,18 +100,11 @@ if (process.env.NODE_ENV !== "production") {
   window.CUSTOM_PLUGIN.set(
     process.env.VUE_APP_CUSTOM_PLUGIN_ID,
     (dom, props) => {
-      // if (dom.childNodes.length > 0) {
-      //   dom.removeChild(dom.childNodes[0]);
-      // }
-      // const div = document.createElement("div");
-      // dom.appendChild(div);
-      // new Vue({
-      //   render: h => <App {...{ props }} />,
-      // }).$mount(div);
       // 优化
       if (!window.Vue) {
         loadScript('/static/vue.min.js', () => {
           loadScript('/static/element-ui/index.js', () => {
+            Vue.config.productionTip = false;
             run(dom, props)
           })
         })
