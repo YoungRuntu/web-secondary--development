@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === "development") {
 }
 const prefix = window.apiContextPathPrefix ? window.apiContextPathPrefix : "";
 const instance = axios.create({
-  baseURL: `${prefix}${apiContextPath}/sdata/rest`,
+  baseURL: `${apiContextPath}/dtyq/pngf/sdata/rest`,
   timeout: 60000,
   validateStatus: function (status) {
     return status >= 200 && status < 300; // default
